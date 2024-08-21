@@ -1,0 +1,21 @@
+.container {
+  display: grid;
+  grid-template-areas:
+    'search-chats chat-header'
+    'chat-list chat-messages';
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 200px 1fr;
+  height: 100vh;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    grid-template-areas:
+      'search-chats'
+      'chat-list'
+      'chat-header'
+      'chat-messages';
+    grid-template-columns: 1fr;
+  }
+}

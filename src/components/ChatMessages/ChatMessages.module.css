@@ -1,0 +1,9 @@
+.messages {
+  grid-area: chat-messages;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.message {
+  margin-bottom: 10px;
+}

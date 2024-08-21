@@ -1,0 +1,10 @@
+.list {
+  grid-area: chat-list;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.item {
+  margin-bottom: 10px;
+}
