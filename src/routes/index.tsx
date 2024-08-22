@@ -11,6 +11,10 @@ const routes: RouteObject[] = [
     path: '/profile',
     element: <ProfilePage />,
   },
+  {
+    path: '/chat/:id',
+    element: <HomePage />,
+  },
 ]
 
 const router = createBrowserRouter(routes)

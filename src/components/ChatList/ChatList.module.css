@@ -3,6 +3,8 @@
   border-right: 1px solid #ccc;
   padding: 10px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .item {
