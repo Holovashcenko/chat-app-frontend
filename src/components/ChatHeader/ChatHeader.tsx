@@ -1,10 +1,13 @@
 import React from 'react'
 import styles from './ChatHeader.module.css'
 
-const ChatHeader: React.FC = () => {
+type Props = {
+  chatName: string
+}
+const ChatHeader: React.FC<Props> = ({ chatName }) => {
   return (
     <div className={styles.header}>
-      <h1>Chat Name</h1>
+      <h1>{chatName}</h1>
     </div>
   )
 }

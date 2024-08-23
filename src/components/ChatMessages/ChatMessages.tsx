@@ -2,35 +2,43 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import styles from './ChatMessages.module.css'
 import ChatHeader from '../ChatHeader/ChatHeader'
+import { FaPaperPlane } from 'react-icons/fa'
 
-interface Message {
+type Message = {
   _id: string
   content: string
   owner: string
   createdAt: string
+  chatName: string
 }
 
-interface ChatMessagesProps {
+type Props = {
   chatId: string
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ chatId }) => {
+const ChatMessages: React.FC<Props> = ({ chatId }) => {
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [newMessage, setNewMessage] = useState<string>('')
 
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/messages/${chatId}`)
+      setMessages(response.data)
+    } catch (err) {
+      console.log(err)
+      setError('Failed to fetch messages')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/messages/${chatId}`)
-        setMessages(response.data)
-      } catch (err) {
-        console.log(err)
-        setError('Failed to fetch messages')
-      } finally {
-        setLoading(false)
-      }
+    if (!chatId) {
+      setError('Invalid chat ID')
+      setLoading(false)
+      return
     }
 
     fetchMessages()
@@ -42,11 +50,11 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ chatId }) => {
     if (!newMessage.trim()) return
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/messages`, {
+      await axios.post(`http://localhost:5000/api/messages`, {
         content: newMessage,
         chatId: chatId,
       })
-      setMessages([...messages, response.data])
+      await fetchMessages()
       setNewMessage('')
     } catch (err) {
       console.log(err)
@@ -63,8 +71,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ chatId }) => {
   }
 
   return (
-    <>
-      <ChatHeader />
+    <div className={styles.container}>
+      <ChatHeader chatName={messages.length > 0 ? messages[0].chatName : 'Chat'} />
       <div className={styles.messages}>
         {messages.length === 0 ? (
           <div>No messages</div>
@@ -80,20 +88,20 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ chatId }) => {
             </div>
           ))
         )}
-        <form className={styles.form} onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message"
-            className={styles.input}
-          />
-          <button type="submit" className={styles.button}>
-            Send
-          </button>
-        </form>
       </div>
-    </>
+      <form className={styles.form} onSubmit={handleSendMessage}>
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Type a message"
+          className={styles.input}
+        />
+        <button type="submit" className={styles.button}>
+          <FaPaperPlane />
+        </button>
+      </form>
+    </div>
   )
 }
 

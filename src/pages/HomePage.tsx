@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChatList, ChatMessages, SearchChats } from '../components'
+import { ChatList, ChatMessages } from '../components'
 import { HomeLayout } from '../layouts'
 import { useParams } from 'react-router-dom'
 
@@ -8,7 +8,6 @@ const HomePage: React.FC = () => {
 
   return (
     <HomeLayout>
-      <SearchChats />
       <ChatList />
 
       {id && <ChatMessages chatId={id} />}
