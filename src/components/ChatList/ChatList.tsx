@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa'
@@ -92,9 +92,9 @@ const ChatList: React.FC = () => {
     setNewChatModalOpen(false)
   }
 
-  const handleSearchResults = (searchResults: Chat[]) => {
+  const handleSearchResults = useCallback((searchResults: Chat[]) => {
     setChats(searchResults)
-  }
+  }, [])
 
   if (loading) {
     return <div className={styles.loading}>Loading...</div>
@@ -105,7 +105,7 @@ const ChatList: React.FC = () => {
   }
 
   return (
-    <>
+    <div>
       <SearchChats onSearchResults={handleSearchResults} />
       <div className={styles.list}>
         <button className={styles.newChatButton} onClick={() => setNewChatModalOpen(true)}>
@@ -171,7 +171,7 @@ const ChatList: React.FC = () => {
           onCreate={handleCreateChat}
         />
       </div>
-    </>
+    </div>
   )
 }
 
