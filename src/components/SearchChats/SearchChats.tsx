@@ -3,10 +3,12 @@ import axios from 'axios'
 import { FaSearch } from 'react-icons/fa'
 import styles from './SearchChats.module.css'
 
-type Chat = {
+interface Chat {
   _id: string
   firstName: string
   lastName: string
+  lastMessageContent: string
+  lastMessageDate: string
 }
 
 const SearchChats: React.FC<{ onSearchResults: (chats: Chat[]) => void }> = ({ onSearchResults }) => {

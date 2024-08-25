@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa'
+import { FaEdit, FaTrashAlt, FaPlus, FaUser } from 'react-icons/fa'
 import styles from './ChatList.module.css'
 import ConfirmModal from '../ConfirmModal/ConfirmModal'
 import NewChatModal from '../NewChatModal/NewChatModal'
@@ -11,6 +11,8 @@ interface Chat {
   _id: string
   firstName: string
   lastName: string
+  lastMessageContent: string
+  lastMessageDate: string
 }
 
 const ChatList: React.FC = () => {
@@ -96,6 +98,15 @@ const ChatList: React.FC = () => {
     setChats(searchResults)
   }, [])
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: '2-digit',
+      year: 'numeric',
+    })
+  }
+
   if (loading) {
     return <div className={styles.loading}>Loading...</div>
   }
@@ -109,7 +120,7 @@ const ChatList: React.FC = () => {
       <SearchChats onSearchResults={handleSearchResults} />
       <div className={styles.list}>
         <button className={styles.newChatButton} onClick={() => setNewChatModalOpen(true)}>
-          <FaPlus className={styles.newChatIcon} />
+          <FaPlus className={styles.newChatIcon} aria-label="New Chat" />
           New Chat
         </button>
         {chats.length === 0 ? (
@@ -139,10 +150,17 @@ const ChatList: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <div className={styles.chatInfo}>
-                  <Link to={`/chat/${chat._id}`} className={styles.chatLink}>
-                    {chat.firstName} {chat.lastName}
-                  </Link>
+                <>
+                  <div className={styles.chatInfo}>
+                    <div className={styles.chatDetails}>
+                      <FaUser className={styles.userIcon} aria-label="User Icon" />
+                      <Link to={`/chat/${chat._id}`} className={styles.chatLink}>
+                        {chat.firstName} {chat.lastName}
+                      </Link>
+                      <div className={styles.chatDate}>{formatDate(chat.lastMessageDate)}</div>
+                    </div>
+                    <div className={styles.lastMessage}>{chat.lastMessageContent}</div>
+                  </div>
                   <div className={styles.actions}>
                     <FaEdit
                       className={styles.editIcon}
@@ -151,10 +169,15 @@ const ChatList: React.FC = () => {
                         setEditFirstName(chat.firstName)
                         setEditLastName(chat.lastName)
                       }}
+                      aria-label="Edit chat"
                     />
-                    <FaTrashAlt className={styles.deleteIcon} onClick={() => handleDeleteChat(chat._id)} />
+                    <FaTrashAlt
+                      className={styles.deleteIcon}
+                      onClick={() => handleDeleteChat(chat._id)}
+                      aria-label="Delete chat"
+                    />
                   </div>
-                </div>
+                </>
               )}
             </div>
           ))

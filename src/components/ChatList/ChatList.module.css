@@ -1,48 +1,38 @@
-.list {
-  grid-area: chat-list;
-  border-right: 1px solid #ccc;
-  padding: 10px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
 .item {
   margin-bottom: 10px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   position: relative;
+  overflow: hidden;
 }
 
 .chatInfo {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   width: 100%;
-  position: relative;
+  transition: transform 0.3s ease;
+  margin-left: 20px;
 }
 
-.chatLink {
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
-  flex-grow: 1;
-}
-
-.chatLink:hover {
-  text-decoration: underline;
+.item:hover .chatInfo {
+  transform: translateX(-20px);
 }
 
 .actions {
   display: flex;
   align-items: center;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%) translateX(40px);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1;
 }
 
 .item:hover .actions {
   opacity: 1;
+  transform: translateY(-50%) translateX(0);
 }
 
 .editIcon,
@@ -123,4 +113,32 @@
 
 .newChatIcon {
   font-size: 20px;
+}
+
+.lastMessage {
+  font-size: 0.9em;
+  color: #777;
+  margin-top: 2px;
+  width: 90%;
+}
+
+.chatDate {
+  font-size: 0.8em;
+  color: #aaa;
+  text-align: right;
+  white-space: nowrap;
+  align-self: center;
+  flex-grow: 1;
+}
+
+.userIcon {
+  font-size: 24px;
+  color: #007bff;
+  margin-right: 10px;
+}
+
+.chatDetails {
+  flex-grow: 1;
+  display: flex;
+  margin-bottom: 10px;
 }

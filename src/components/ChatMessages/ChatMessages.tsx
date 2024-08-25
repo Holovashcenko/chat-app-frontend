@@ -3,6 +3,8 @@ import axios from 'axios'
 import styles from './ChatMessages.module.css'
 import ChatHeader from '../ChatHeader/ChatHeader'
 import { FaPaperPlane } from 'react-icons/fa'
+import defaultUserImg from '../../assets/default-user.jpg'
+import rightUserImg from '../../assets/me.png' 
 
 type Message = {
   _id: string
@@ -84,7 +86,24 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
                 message.owner === 'me' ? styles['message-right'] : styles['message-left']
               }`}
             >
-              {message.content}
+              <img
+                src={message.owner === 'me' ? rightUserImg : defaultUserImg} 
+                alt="User"
+                className={styles.userImage}
+              />
+              <div>
+                <div className={styles.messageContent}>{message.content}</div>
+                <div className={styles.messageDate}>
+                  {new Date(message.createdAt).toLocaleString('en-US', {
+                    month: 'numeric',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: true,
+                  })}
+                </div>
+              </div>
             </div>
           ))
         )}
