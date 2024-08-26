@@ -26,10 +26,12 @@ const ChatList: React.FC = () => {
   const [chatToDelete, setChatToDelete] = useState<string | null>(null)
   const [newChatModalOpen, setNewChatModalOpen] = useState<boolean>(false)
 
+  const apiUrl = import.meta.env.VITE_API_URL
+
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/chats')
+        const response = await axios.get(`${apiUrl}/api/chats`)
         setChats(response.data)
       } catch (err) {
         console.error('Failed to fetch chats:', err)
@@ -44,11 +46,11 @@ const ChatList: React.FC = () => {
 
   const handleUpdateChat = async (chatId: string) => {
     try {
-      await axios.put(`http://localhost:5000/api/chats/${chatId}`, {
+      await axios.put(`${apiUrl}/api/chats/${chatId}`, {
         firstName: editFirstName,
         lastName: editLastName,
       })
-      const response = await axios.get('http://localhost:5000/api/chats')
+      const response = await axios.get(`${apiUrl}/api/chats`)
       setChats(response.data)
       setEditChatId(null)
     } catch (err) {
@@ -65,8 +67,8 @@ const ChatList: React.FC = () => {
   const confirmDeleteChat = async () => {
     if (chatToDelete) {
       try {
-        await axios.delete(`http://localhost:5000/api/chats/${chatToDelete}`)
-        const response = await axios.get('http://localhost:5000/api/chats')
+        await axios.delete(`${apiUrl}/api/chats/${chatToDelete}`)
+        const response = await axios.get(`${apiUrl}api/chats`)
         setChats(response.data)
       } catch (err) {
         console.error('Failed to delete chat:', err)
@@ -84,8 +86,8 @@ const ChatList: React.FC = () => {
 
   const handleCreateChat = async (firstName: string, lastName: string) => {
     try {
-      await axios.post('http://localhost:5000/api/chats', { firstName, lastName })
-      const response = await axios.get('http://localhost:5000/api/chats')
+      await axios.post(`${apiUrl}/api/chats`, { firstName, lastName })
+      const response = await axios.get(`${apiUrl}/api/chats`)
       setChats(response.data)
     } catch (err) {
       console.error('Failed to create chat:', err)
@@ -118,11 +120,14 @@ const ChatList: React.FC = () => {
   return (
     <div>
       <SearchChats onSearchResults={handleSearchResults} />
+
       <div className={styles.list}>
-        <button className={styles.newChatButton} onClick={() => setNewChatModalOpen(true)}>
-          <FaPlus className={styles.newChatIcon} aria-label="New Chat" />
-          New Chat
-        </button>
+        <div className={styles.buttonWrapper}>
+          <button className={styles.newChatButton} onClick={() => setNewChatModalOpen(true)}>
+            <FaPlus className={styles.newChatIcon} aria-label="New Chat" />
+            New Chat
+          </button>
+        </div>
         {chats.length === 0 ? (
           <div className={styles.noChats}>No chats available</div>
         ) : (
@@ -157,9 +162,11 @@ const ChatList: React.FC = () => {
                       <Link to={`/chat/${chat._id}`} className={styles.chatLink}>
                         {chat.firstName} {chat.lastName}
                       </Link>
-                      <div className={styles.chatDate}>{formatDate(chat.lastMessageDate)}</div>
+                      <div className={styles.chatDate}>
+                        {chat.lastMessageDate ? formatDate(chat.lastMessageDate) : ''}
+                      </div>
                     </div>
-                    <div className={styles.lastMessage}>{chat.lastMessageContent}</div>
+                    <div className={styles.lastMessage}>{chat.lastMessageContent ? chat.lastMessageContent : ''}</div>
                   </div>
                   <div className={styles.actions}>
                     <FaEdit

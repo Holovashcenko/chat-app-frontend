@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
+import socket from '../../config/socket'
 import styles from './ChatMessages.module.css'
 import ChatHeader from '../ChatHeader/ChatHeader'
 import { FaPaperPlane } from 'react-icons/fa'
 import defaultUserImg from '../../assets/default-user.jpg'
-import rightUserImg from '../../assets/me.png' 
+import rightUserImg from '../../assets/me.png'
+import Notification from '../Notification/Notification'
 
 type Message = {
   _id: string
@@ -12,6 +14,7 @@ type Message = {
   owner: string
   createdAt: string
   chatName: string
+  chatId: string
 }
 
 type Props = {
@@ -23,10 +26,14 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [newMessage, setNewMessage] = useState<string>('')
+  const [autoMessage, setAutoMessage] = useState<boolean>(false)
+  const [notification, setNotification] = useState<string | null>(null)
+
+  const apiUrl = import.meta.env.VITE_API_URL
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/messages/${chatId}`)
+      const response = await axios.get(`${apiUrl}/api/messages/${chatId}`)
       setMessages(response.data)
     } catch (err) {
       console.log(err)
@@ -44,6 +51,21 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
     }
 
     fetchMessages()
+
+    socket.on('newMessage', (message: Message) => {
+      console.log('New message received:', message)
+      if (message.owner === 'user') {
+        setNotification('You have received a new message!')
+        setTimeout(() => setNotification(null), 4000)
+      }
+      if (message.chatId === chatId) {
+        setMessages((prevMessages) => [...prevMessages, message])
+      }
+    })
+
+    return () => {
+      socket.off('newMessage')
+    }
   }, [chatId])
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -52,7 +74,7 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
     if (!newMessage.trim()) return
 
     try {
-      await axios.post(`http://localhost:5000/api/messages`, {
+      await axios.post(`${apiUrl}/api/messages`, {
         content: newMessage,
         chatId: chatId,
       })
@@ -61,6 +83,21 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
     } catch (err) {
       console.log(err)
       setError('Failed to send message')
+    }
+  }
+
+  const toggleAutoMessage = async () => {
+    try {
+      const response = await axios.post(`${apiUrl}/api/messages/auto-message/toggle`, {
+        enabled: !autoMessage,
+      })
+
+      if (response.status === 200) {
+        setAutoMessage(!autoMessage)
+      }
+    } catch (err) {
+      console.log(err)
+      setError('Failed to update auto message status')
     }
   }
 
@@ -87,7 +124,7 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
               }`}
             >
               <img
-                src={message.owner === 'me' ? rightUserImg : defaultUserImg} 
+                src={message.owner === 'me' ? rightUserImg : defaultUserImg}
                 alt="User"
                 className={styles.userImage}
               />
@@ -120,6 +157,10 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
           <FaPaperPlane />
         </button>
       </form>
+      <button onClick={toggleAutoMessage} className={styles.autoMessageButton}>
+        {autoMessage ? 'Stop Auto Messages' : 'Start Auto Messages'}
+      </button>
+      {notification && <Notification message={notification} onClose={() => setNotification(null)} />}
     </div>
   )
 }

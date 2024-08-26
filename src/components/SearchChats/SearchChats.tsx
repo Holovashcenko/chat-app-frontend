@@ -15,6 +15,8 @@ const SearchChats: React.FC<{ onSearchResults: (chats: Chat[]) => void }> = ({ o
   const [query, setQuery] = useState<string>('')
   const [debouncedQuery, setDebouncedQuery] = useState<string>(query)
 
+  const apiUrl = import.meta.env.VITE_API_URL
+
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query)
@@ -30,9 +32,9 @@ const SearchChats: React.FC<{ onSearchResults: (chats: Chat[]) => void }> = ({ o
       try {
         let response
         if (debouncedQuery.trim() === '') {
-          response = await axios.get('http://localhost:5000/api/chats')
+          response = await axios.get(`${apiUrl}/api/chats`)
         } else {
-          response = await axios.get(`http://localhost:5000/api/chats/search`, {
+          response = await axios.get(`${apiUrl}/api/chats/search`, {
             params: { query: debouncedQuery },
           })
         }
