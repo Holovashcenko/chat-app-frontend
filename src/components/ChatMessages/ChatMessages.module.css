@@ -23,6 +23,7 @@
   max-width: 70%;
   word-wrap: break-word;
   line-height: 1.5;
+  position: relative;
 }
 
 .message-left {
@@ -107,4 +108,29 @@
 .autoMessageButton:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff4d4d;
+  font-size: 18px;
+  margin-left: 10px;
+  transition: color 0.3s ease;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+.deleteButton:hover {
+  color: #e60000;
+}
+
+.deleteButton:focus {
+  outline: none;
+}
+
+.deleteButton svg {
+  vertical-align: middle;
 }

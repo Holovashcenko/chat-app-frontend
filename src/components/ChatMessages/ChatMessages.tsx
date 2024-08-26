@@ -3,7 +3,7 @@ import axios from 'axios'
 import socket from '../../config/socket'
 import styles from './ChatMessages.module.css'
 import ChatHeader from '../ChatHeader/ChatHeader'
-import { FaPaperPlane } from 'react-icons/fa'
+import { FaPaperPlane, FaTrash } from 'react-icons/fa'
 import defaultUserImg from '../../assets/default-user.jpg'
 import rightUserImg from '../../assets/me.png'
 import Notification from '../Notification/Notification'
@@ -86,6 +86,16 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
     }
   }
 
+  const handleDeleteMessage = async (messageId: string) => {
+    try {
+      await axios.delete(`${apiUrl}/api/messages/${messageId}`)
+      setMessages((prevMessages) => prevMessages.filter((msg) => msg._id !== messageId))
+    } catch (err) {
+      console.log(err)
+      setError('Failed to delete message')
+    }
+  }
+
   const toggleAutoMessage = async () => {
     try {
       const response = await axios.post(`${apiUrl}/api/messages/auto-message/toggle`, {
@@ -140,6 +150,11 @@ const ChatMessages: React.FC<Props> = ({ chatId }) => {
                     hour12: true,
                   })}
                 </div>
+                {message.owner === 'me' && (
+                  <button className={styles.deleteButton} onClick={() => handleDeleteMessage(message._id)}>
+                    <FaTrash />
+                  </button>
+                )}
               </div>
             </div>
           ))
